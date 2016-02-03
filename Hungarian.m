@@ -183,7 +183,7 @@ while zflag
         % Cover the row and uncover the column containing the zero
           if sum(find(M(row,:)==1)) ~= 0
             r_cov(row) = 1;
-            zcol = find(M(row,:)==1);
+            zcol = M(row,:)==1;
             c_cov(zcol) = 0;
           else
             stepnum = 5;
@@ -259,12 +259,12 @@ stepnum = 3;
 %**************************************************************************
 
 function [P_cond,stepnum] = step6(P_cond,r_cov,c_cov)
-a = find(r_cov == 0);
-b = find(c_cov == 0);
+a = r_cov == 0;
+b = c_cov == 0;
 minval = min(min(P_cond(a,b)));
 
-P_cond(find(r_cov == 1),:) = P_cond(find(r_cov == 1),:) + minval;
-P_cond(:,find(c_cov == 0)) = P_cond(:,find(c_cov == 0)) - minval;
+P_cond(r_cov == 1,:) = P_cond(r_cov == 1,:) + minval;
+P_cond(:,c_cov == 0) = P_cond(:,c_cov == 0) - minval;
 
 stepnum = 4;
 
