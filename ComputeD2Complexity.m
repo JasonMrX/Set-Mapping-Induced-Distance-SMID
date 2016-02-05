@@ -1,4 +1,4 @@
-function  [mDistPixel] = ComputeD2Complexity(filename1, filename2)
+function  [mDistPixel, mDistCost] = ComputeD2Complexity(filename1, filename2)
 % To compute ISmai with two-layer blk matching.
 % First layer uses non-overlapping perfect match
 % Second layer uses co-located area, but allow smaller blks.
@@ -13,18 +13,17 @@ function  [mDistPixel] = ComputeD2Complexity(filename1, filename2)
    %sizef = 136*136;
    [ X1oriL] = ReadResizeGrayImage(filename1, sizef) ;
    [ X2oriL] = ReadResizeGrayImage(filename2, sizef) ;
-   figure, imshow(uint8(X1oriL));
-   figure, imshow(uint8(X2oriL));
    %[row col] = size(X2ori);
    %X1ori(1:row, 1:col) = X1ori(1:row, 1:col)/0.95; % / max(max(X1ori(1:row, 1:col))) * max(max(X2ori(1:row, 1:col))) ;
    %X1ori(1:row/3, 1:col) = X2ori(1:row/3, 1:col)  ;
    %X2ori(1:row/3, 1:col) = X2ori(1:row/3, 1:col) -25 ;
    %X2ori(row/2:row, 1:col) = X2ori(row/2:row, 1:col) -15 ;
     
-   %figure
-   %imshow(uint8(X1oriL));
-   %figure
-   %imshow(uint8(X2oriL));
+   close all;
+   figure
+   imshow(uint8(X1oriL));
+   figure
+   imshow(uint8(X2oriL));
    
    % watch the same size
    [rowL, colL] = size(X1oriL);
@@ -47,11 +46,12 @@ function  [mDistPixel] = ComputeD2Complexity(filename1, filename2)
 
    %X1H = X1oriH(17:4*rowL-16, 17:4*colL-16);
    %X2H = X2oriH(4*m-3:4*rowL+4*m-36, 4*n-3:4*colL+4*n-36) ;
-   blkcost_layer2 = DoEmdondMatchLayer2(Cedges, X1L-mean(mean(X1L)), X2L-mean(mean(X2L)));
+   [blkcost_layer2, distcost] = DoEmdondMatchLayer2(Cedges, X1L-mean(mean(X1L)), X2L-mean(mean(X2L)));
    
    fprintf('blkcost_L2: %8.3f \n', blkcost_layer2/64);
   
-   mDistPixel  = blkcost_layer2/64;
+   mDistPixel  = blkcost_layer2 / 64;
+   mDistCost = distcost / 64;
       
 % search by MSE for a few locations 
 function [Y, MseMinPos] = SearchByMSE(X1ori, X2ori)
@@ -87,14 +87,15 @@ function [Gsmallcrop]= ReadResizeGrayImage(filename, sizef)
     Gsmallcrop = Gsmall(1:floor(row/8)*8, 1:floor(col/8)*8);
     
 
-function blkcost = DoEmdondMatchLayer2(edges, X1, X2)
+function [blkcost, distcost] = DoEmdondMatchLayer2(edges, X1, X2)
     Ne = size(edges, 1);
     [row, col] = size(X1);
-    
-    blkrowL = row/8;
-    blkcolL = col/8;   
-    
-    totalcost = 0 ;
+
+    blkrowL = row / 8;
+    blkcolL = col / 8;   
+
+    totalcost = 0;
+    distcost = 0;
     
     for n=1:Ne
         Id1 = edges(n,1);
@@ -105,40 +106,26 @@ function blkcost = DoEmdondMatchLayer2(edges, X1, X2)
         blki2 = floor(Id2/blkcolL) + 1 ;
         blkj2 = mod(Id2, blkcolL) +1 ;
         
-        %if blki1==blkrow || blki2==blkrow || blkj1==blkcol || blkj2==blkcol
-        %   continue ;
-        %end
-        
         Center_i1 = (blki1-1)*8 + 1 ;
         Center_j1 = (blkj1-1)*8 + 1 ;
         Center_i2 = (blki2-1)*8 + 1 ;
         Center_j2 = (blkj2-1)*8 + 1 ;
         
-        %i1 = Center_i1 ;
-        %j1 = Center_j1 ;
-        %i2 = Center_i2 ;
-        %j2 = Center_j2 ;
+        block1 = X1( Center_i1:Center_i1+7, Center_j1:Center_j1+7 );
+        block2 = X2( Center_i2:Center_i2+7, Center_j2:Center_j2+7 );
+        [mv, cost] = DoHungarianMatch(block1, block2, 2) ;
+        Pos1 = [floor(Id1 / blkcolL) + 1, mod(Id1, blkcolL) + 1];
+        Pos2 = [floor(Id2 / blkcolL) + 1, mod(Id2, blkcolL) + 1];
+        mv = repmat(Pos2 - Pos1, size(mv, 1), 1) + mv;
         
-           % block1 = X1(max(Center_i1-2,1):min(Center_i1+7+2, row), max(Center_j1-2,1):min(Center_j1+7+2, col)); 
-           % block2 = X2(max(Center_i2-2,1):min(Center_i2+7+2, row), max(Center_j2-2,1):min(Center_j2+7+2, col)); 
-            block1 = X1( Center_i1:Center_i1+7, Center_j1:Center_j1+7 );
-            block2 = X2( Center_i2:Center_i2+7, Center_j2:Center_j2+7 );
-        %    [ClinkMat Clink cost] = DoEdmondMatch(block1, block2, 1) ;
-            
-        %    totalcost = totalcost + cost ;
-        [cost] = DoHungarianMatch(block1, block2, 2) ;
-         totalcost = totalcost + cost*16 ;
-        
-        %   Given block1, search for block2    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
+        totalcost = totalcost + cost * 16 ;
+        distcost = distcost + 4 * sum(sqrt(mv(:, 1).^2 + mv(:, 2).^2));
     end
     
-      
-    blkcost = totalcost/Ne ;  % per block 
+    blkcost = totalcost / Ne ;  % per block
+    distcost = distcost / Ne;
     
-      %fprintf('Layer2 %f \n', blkcost);
+    
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [ClinkMat, Clink, cost] = DoEdmondMatch(X1, X2, blksize)
@@ -198,9 +185,9 @@ function [ClinkMat, Clink, cost] = DoEdmondMatch(X1, X2, blksize)
       end
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [cost] = DoHungarianMatch(X1, X2, blksize)
-      [row1 col1] = size(X1);
-      [row2 col2] = size(X2);
+function [mv, cost] = DoHungarianMatch(X1, X2, blksize)
+      [row1, col1] = size(X1);
+      [row2, col2] = size(X2);
       row = min(row1, row2);
       col = min(col1, col2);
       M = round(row/blksize);
@@ -220,10 +207,20 @@ function [cost] = DoHungarianMatch(X1, X2, blksize)
           end
       end
       end
-      [link cost] = Hungarian(weight);
-      
+      [link, cost] = Hungarian(weight);
       cost = cost/Len;  % per block 
+      mv = link2mv(link, blksize);
 
+%%%%%%%%%%%%%%%%%%%%% transform link matrix to motion vection mv %%%%%%%%%%
+function [mv] = link2mv(link, blksize)
+    numVertex = size(link, 1);
+    blkWidth = sqrt(numVertex);
+    idx1 = mod(find(link(:)) - 1, numVertex) + 1;
+    idx2 = (1 : numVertex)';
+    pos1 = [floor((idx1 - 1) / blkWidth) + 1, mod(idx1 - 1, blkWidth) + 1];
+    pos2 = [floor((idx2 - 1) / blkWidth) + 1, mod(idx2 - 1, blkWidth) + 1];
+    mv = (pos2 - pos1) * blksize;
+    
  
 %%%%%%%%%%%%%
 % Clink stores (id1 id2)-pairs of edges, idx\in[0, N-1]
