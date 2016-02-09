@@ -16,7 +16,7 @@ close all;
   
   if 1
       figure,
-      range1 = 0:10:2000*1.25;
+      range1 = 0:20:2000*1.25;
       Sim_DCTm    = hist(SimMetric   (SelectSet1,1), range1);
       Notsim_DCTm = hist(NotsimMetric(SelectSet2,1), range1);
       ax = range1;
@@ -30,7 +30,7 @@ close all;
       figure,
       low = min([SimMetric(SelectSet1,2); NotsimMetric(SelectSet2,2)]);
       high = max([SimMetric(SelectSet1,2); NotsimMetric(SelectSet2,2)]);
-      range2 = low:0.1:high;
+      range2 = low:0.3:high;
       Sim_DCTm = hist(SimMetric(SelectSet1,2), range2);
       Notsim_DCTm = hist(NotsimMetric(SelectSet2,2), range2);
       ax = range2;

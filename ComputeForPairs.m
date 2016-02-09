@@ -1,8 +1,8 @@
-function ComputeForPairs(ConsensusPairFile, AllMetrics_SimFile)
+function ComputeForPairs(AllMetrics_SimFile)
 % the same as compute_allmetrics_forpairs(), except that the 
 % GreedyComputationISmai8 is used instead of GreedyComputationISmai4.
 %  Nov. 21. 
-
+ConsensusPairFile = 'ConsensusPairs1.dat';
 
 % Read pairs info from ConsensusPairFile, compute all metrics and store
 % them into AllMetrics_SimFile
