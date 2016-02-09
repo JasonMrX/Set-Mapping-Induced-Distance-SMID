@@ -1,4 +1,4 @@
-function  [mDistPixel, mDistCost] = ComputeD2Complexity(filename1, filename2)
+function  [mDistPixel, mDistCost, success] = ComputeD2Complexity(filename1, filename2)
 % To compute ISmai with two-layer blk matching.
 % First layer uses non-overlapping perfect match
 % Second layer uses co-located area, but allow smaller blks.
@@ -30,9 +30,12 @@ function  [mDistPixel, mDistCost] = ComputeD2Complexity(filename1, filename2)
    [row2, col2] = size(X2oriL);
    if rowL ~= row2 || colL ~= col2
        fprintf('size different\n');
-       mDistPixel=0;
+       mDistPixel = 0;
+       mDistCost = 0;
+       success = 0;
        return ;
    end
+   success = 1;
    [~, MseMinPos] = SearchByMSE(X1oriL, X2oriL) ;
    m = floor((MseMinPos(1) - 1) / 8) + 1;
    n = mod(MseMinPos(1) - 1, 8) + 1;
@@ -41,7 +44,20 @@ function  [mDistPixel, mDistCost] = ComputeD2Complexity(filename1, filename2)
    X1L = X1oriL(5:rowL-4, 5:colL-4);
    X2L = X2oriL(m:rowL-9+m, n:colL-9+n) ;
    [~, Cedges, blkcost_layer1] = DoEdmondMatch(X1L - mean(X1L(:)), X2L - mean(X2L(:)), 8) ;
-   
+   % ===============================================
+%     Pos1 = [floor(Cedges(:, 1) / blkcolL) + 1, mod(Cedges(:, 1), blkcolL) + 1];
+%     Pos2 = [floor(Cedges(:, 2) / blkcolL) + 1, mod(Cedges(:, 2), blkcolL) + 1];
+%     close all;
+%     figure,
+%     imshow(uint8(X1oriL));
+%     figure,
+%     imshow(uint8(X2oriL));
+%     hold on;
+%     for i = 1 : size(Cedges, 1)
+%         quiver(Pos2(i, 1), Pos2(i, 2), Pos1(i, 1), Pos1(i, 2));
+%     end
+%     hold off;
+   % ===============================================
    fprintf('blkcost_L1: %8.3f  \n', blkcost_layer1/64);
 
    %X1H = X1oriH(17:4*rowL-16, 17:4*colL-16);
