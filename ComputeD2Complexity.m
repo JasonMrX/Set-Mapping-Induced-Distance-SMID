@@ -1,4 +1,4 @@
-function  [mDistPixel, mDistCost, success] = ComputeD2Complexity(filename1, filename2)
+function  [mDistPixel, mDistCost, mDistVar, mDistEntropy, success] = ComputeD2Complexity(filename1, filename2)
 % To compute ISmai with two-layer blk matching.
 % First layer uses non-overlapping perfect match
 % Second layer uses co-located area, but allow smaller blks.
@@ -20,10 +20,10 @@ function  [mDistPixel, mDistCost, success] = ComputeD2Complexity(filename1, file
    %X2ori(row/2:row, 1:col) = X2ori(row/2:row, 1:col) -15 ;
     
    close all;
-   figure
-   imshow(uint8(X1oriL));
-   figure
-   imshow(uint8(X2oriL));
+%    figure
+%    imshow(uint8(X1oriL));
+%    figure
+%    imshow(uint8(X2oriL));
    
    % watch the same size
    [rowL, colL] = size(X1oriL);
@@ -62,12 +62,14 @@ function  [mDistPixel, mDistCost, success] = ComputeD2Complexity(filename1, file
 
    %X1H = X1oriH(17:4*rowL-16, 17:4*colL-16);
    %X2H = X2oriH(4*m-3:4*rowL+4*m-36, 4*n-3:4*colL+4*n-36) ;
-   [blkcost_layer2, distcost] = DoEmdondMatchLayer2(Cedges, X1L-mean(mean(X1L)), X2L-mean(mean(X2L)));
+   [blkcost_layer2, distcost, motionVectors] = DoEmdondMatchLayer2(Cedges, X1L-mean(mean(X1L)), X2L-mean(mean(X2L)));
    
    fprintf('blkcost_L2: %8.3f \n', blkcost_layer2/64);
   
    mDistPixel  = blkcost_layer2 / 64;
    mDistCost = distcost / 64;
+   mDistVar = var(motionVectors(:, 1), 1) + var(motionVectors(:, 2), 1);
+   mDistEntropy = entropy(uint8(motionVectors(:) - min(motionVectors(:))));
       
 % search by MSE for a few locations 
 function [Y, MseMinPos] = SearchByMSE(X1ori, X2ori)
@@ -103,10 +105,11 @@ function [Gsmallcrop]= ReadResizeGrayImage(filename, sizef)
     Gsmallcrop = Gsmall(1:floor(row/8)*8, 1:floor(col/8)*8);
     
 
-function [blkcost, distcost] = DoEmdondMatchLayer2(edges, X1, X2)
+function [blkcost, distcost, motionVectors] = DoEmdondMatchLayer2(edges, X1, X2)
     Ne = size(edges, 1);
     [row, col] = size(X1);
 
+    motionVectors = zeros(numel(X1) / 4, 2);
     blkrowL = row / 8;
     blkcolL = col / 8;   
 
@@ -136,6 +139,8 @@ function [blkcost, distcost] = DoEmdondMatchLayer2(edges, X1, X2)
         
         totalcost = totalcost + cost * 16 ;
         distcost = distcost + 4 * sum(sqrt(mv(:, 1).^2 + mv(:, 2).^2));
+        
+        motionVectors((n - 1) * 16 + 1 : n * 16, :) = mv;
     end
     
     blkcost = totalcost / Ne ;  % per block
