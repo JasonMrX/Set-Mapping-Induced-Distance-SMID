@@ -1,4 +1,4 @@
-function  [mDistPixel, mDistCost, mDistVar, mDistEntropy, success] = ComputeD2Complexity(filename1, filename2)
+function  [mDistPixel, mDistPixel8, mDistCost, mDistVar, mDistEntropy, success] = ComputeD2Complexity(filename1, filename2)
 % To compute ISmai with two-layer blk matching.
 % First layer uses non-overlapping perfect match
 % Second layer uses co-located area, but allow smaller blks.
@@ -43,6 +43,7 @@ function  [mDistPixel, mDistCost, mDistVar, mDistEntropy, success] = ComputeD2Co
    % find the links between 8x8 blocks
    X1L = X1oriL(5:rowL-4, 5:colL-4);
    X2L = X2oriL(m:rowL-9+m, n:colL-9+n) ;
+   
    [~, Cedges, blkcost_layer1] = DoEdmondMatch(X1L - mean(X1L(:)), X2L - mean(X2L(:)), 8) ;
    % ===============================================
 %     Pos1 = [floor(Cedges(:, 1) / blkcolL) + 1, mod(Cedges(:, 1), blkcolL) + 1];
@@ -67,9 +68,16 @@ function  [mDistPixel, mDistCost, mDistVar, mDistEntropy, success] = ComputeD2Co
    fprintf('blkcost_L2: %8.3f \n', blkcost_layer2/64);
   
    mDistPixel  = blkcost_layer2 / 64;
+   mDistPixel8 = blkcost_layer1 / 64;
    mDistCost = distcost / 64;
    mDistVar = var(motionVectors(:, 1), 1) + var(motionVectors(:, 2), 1);
-   mDistEntropy = entropy(uint8(motionVectors(:) - min(motionVectors(:))));
+   mDistEntropy = calEntropy(motionVectors(:));
+   
+function [entropy] = calEntropy(data)
+    h = hist(data, min(data):max(data));
+    h = h(h ~= 0);
+    h = h / sum(h);
+    entropy = sum(-h .* log2(h));
       
 % search by MSE for a few locations 
 function [Y, MseMinPos] = SearchByMSE(X1ori, X2ori)
@@ -135,8 +143,7 @@ function [blkcost, distcost, motionVectors] = DoEmdondMatchLayer2(edges, X1, X2)
         [mv, cost] = DoHungarianMatch(block1, block2, 2) ;
         Pos1 = [floor(Id1 / blkcolL) + 1, mod(Id1, blkcolL) + 1];
         Pos2 = [floor(Id2 / blkcolL) + 1, mod(Id2, blkcolL) + 1];
-        mv = repmat(Pos2 - Pos1, size(mv, 1), 1) + mv;
-        
+        mv = repmat(Pos2 - Pos1, size(mv, 1), 1) * 8 + mv;
         totalcost = totalcost + cost * 16 ;
         distcost = distcost + 4 * sum(sqrt(mv(:, 1).^2 + mv(:, 2).^2));
         
