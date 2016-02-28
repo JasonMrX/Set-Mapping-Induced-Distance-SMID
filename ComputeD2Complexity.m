@@ -31,7 +31,10 @@ function  [mDistPixel, mDistPixel8, mDistCost, mDistVar, mDistEntropy, success] 
    if rowL ~= row2 || colL ~= col2
        fprintf('size different\n');
        mDistPixel = 0;
+       mDistPixel8 = 0;
        mDistCost = 0;
+       mDistVar = 0;
+       mDistEntropy = 0;
        success = 0;
        return ;
    end
