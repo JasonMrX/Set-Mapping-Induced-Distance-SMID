@@ -2,7 +2,7 @@ function ComputeForPairs(AllMetrics_SimFile)
 % the same as compute_allmetrics_forpairs(), except that the 
 % GreedyComputationISmai8 is used instead of GreedyComputationISmai4.
 %  Nov. 21. 
-ConsensusPairFile = 'ConsensusPairs1.dat';
+ConsensusPairFile = 'ComputeConsensusPairs.dat';
 
 % Read pairs info from ConsensusPairFile, compute all metrics and store
 % them into AllMetrics_SimFile
@@ -11,6 +11,10 @@ ConsensusPairFile = 'ConsensusPairs1.dat';
 
     ImagePair = ReadConsensusPairFile(ConsensusPairFile) ;
 
+%     Uncomment this part if you want to see a few comparison at the beginning
+%     x = randperm(numel(ImagePair));
+%     ImagePair(x) = ImagePair;
+    
     foutsim=fopen(AllMetrics_SimFile, 'w');
 
     Npairs = length(ImagePair);
@@ -22,9 +26,9 @@ ConsensusPairFile = 'ConsensusPairs1.dat';
 
          fprintf('%s %s\n', filename1, filename2);
 
-         [mDistPixel, mDistCost, mDistVar, mDistEntropy, success] = ComputeD2Complexity(filename1, filename2)  
+         [mDistPixel, mDistPixel8, mDistCost, mDistVar, mDistEntropy, success] = ComputeD2Complexity(filename1, filename2)  
          if success
-            fprintf(foutsim, '%d %16s %16s  %d   %7.1f %7.1f %7.1f %7.4f\n', ImagePair(n).imageid, filename1, filename2, ImagePair(n).vote, mDistPixel, mDistCost, mDistVar, mDistEntropy); 
+            fprintf(foutsim, '%d %16s %16s  %d   %7.1f %7.1f %7.1f %7.4f %7.1f\n', ImagePair(n).imageid, filename1, filename2, ImagePair(n).vote, mDistPixel, mDistCost, mDistVar, mDistEntropy, mDistPixel8); 
          end
 
     end
