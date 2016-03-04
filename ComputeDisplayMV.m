@@ -11,11 +11,11 @@ function ComputeDisplayMV(filename1, filename2)
    %X2ori(1:row/3, 1:col) = X2ori(1:row/3, 1:col) -25 ;
    %X2ori(row/2:row, 1:col) = X2ori(row/2:row, 1:col) -15 ;
     
-%    close all;
-%    figure
-%    imshow(uint8(X1oriL));
-%    figure
-%    imshow(uint8(X2oriL));
+   close all;
+   figure
+   imshow(uint8(X1oriL));
+   figure
+   imshow(uint8(X2oriL));
    
    % watch the same size
    [rowL, colL] = size(X1oriL);
