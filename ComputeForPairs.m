@@ -26,9 +26,11 @@ ConsensusPairFile = 'ComputeConsensusPairs.dat';
 
          fprintf('%s %s\n', filename1, filename2);
 
-         [mDistPixel, mDistPixel8, mDistCost, mDistVar, mDistEntropy, success] = ComputeD2Complexity(filename1, filename2)  
+%          [mDistPixel, mDistPixel8, mDistCost, mDistVar, mDistEntropy, success] = ComputeD2Complexity(filename1, filename2)  
+         [mDistPixel, mDistEntropy, mDistDCT, success] = ComputeDCTComplexity(filename1, filename2)  
+
          if success
-            fprintf(foutsim, '%d %16s %16s  %d   %7.1f %7.1f %7.1f %7.4f %7.1f\n', ImagePair(n).imageid, filename1, filename2, ImagePair(n).vote, mDistPixel, mDistCost, mDistVar, mDistEntropy, mDistPixel8); 
+            fprintf(foutsim, '%d %16s %16s  %d   %7.1f  %7.4f %7.1f\n', ImagePair(n).imageid, filename1, filename2, ImagePair(n).vote, mDistPixel, mDistEntropy, mDistDCT); 
          end
 
     end
