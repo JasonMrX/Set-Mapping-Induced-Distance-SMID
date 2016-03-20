@@ -12,8 +12,8 @@ function DisplayAllMetric_basedon11
 % 3: mDistDCT, 
 % 4: pmse, Nmatch1, VScore1,  Nmatch2, VScore2
 
-
-  [SimID  NotsimID  SimMetric NotsimMetric  SimName NotSimName] = ReadMetric('testresult11.dat') ;
+close all;
+  [SimID  NotsimID  SimMetric NotsimMetric  SimName NotSimName] = ReadMetric('testresult11_old.dat') ;
   
   
   SelectSet1 = (SimID(:)>0)  ;
@@ -34,24 +34,26 @@ function DisplayAllMetric_basedon11
 
 
       figure
-      Sim_DCTm    = hist(SimMetric   (SelectSet1,2), 0:30:2000);
-      Notsim_DCTm = hist(NotsimMetric(SelectSet2,2), 0:30:2000);
-      ax = 0:30:2000 ;
+      Sim_DCTm    = hist(SimMetric   (SelectSet1,2), 0:5:2000);
+      Notsim_DCTm = hist(NotsimMetric(SelectSet2,2), 0:5:2000);
+      ax = 0:5:2000 ;
       plot(ax, Sim_DCTm, 'g-');
       hold on 
       plot(ax, Notsim_DCTm, 'r-');
       legend('Similar pairs', 'Not-similar pairs');
       %xlabel('T_d(\mu, v)  k=l=1');
+      ylim([0 120]);
       xlabel('$T_d(\mu, v) \ \ \   k=l=1$','Interpreter','latex');
       ylabel('Number of pairs of images');
       
       figure
-      Sim_DCTm = hist(SimMetric(SelectSet1,1),  0:30:2000);
-      Notsim_DCTm = hist(NotsimMetric(SelectSet2,1),  0:30:2000);
-      ax =  0:30:2000 ;
+      Sim_DCTm = hist(SimMetric(SelectSet1,1),  0:5:2000);
+      Notsim_DCTm = hist(NotsimMetric(SelectSet2,1),  0:5:2000);
+      ax =  0:5:2000 ;
       plot(ax, Sim_DCTm, 'g-');
       hold on 
       plot(ax, Notsim_DCTm, 'r-');
+      ylim([0 120]);
       legend('Similar pairs', 'Not-similar pairs');
       xlabel('EMD');
       ylabel('Number of pairs of images');

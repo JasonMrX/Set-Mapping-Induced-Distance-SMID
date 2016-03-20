@@ -7,7 +7,7 @@ function DisplayAllMetric_basedon9
 % 3: mDistDCT, 
 % 4: pmse, Nmatch1, VScore1,  Nmatch2, VScore2
 
-
+close all;
   [SimID  NotsimID  SimMetric NotsimMetric] = ReadMetric('testresult9.dat') ;
   
    SelectSet1 = (SimID(:)>0)  ;

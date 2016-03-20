@@ -55,6 +55,7 @@ close all;
       low = min([SimMetric(SelectSet1, idx); NotsimMetric(SelectSet2, idx)]);
       high = max([SimMetric(SelectSet1, idx); NotsimMetric(SelectSet2, idx)]);
       range = low: (high - low) / 400: high;
+%       range = 0:5:2000;
       Sim_DCTm = hist(SimMetric(SelectSet1,idx), range);
       Notsim_DCTm = hist(NotsimMetric(SelectSet2,idx), range);
       ax = range;
@@ -92,46 +93,3 @@ close all;
   end
   
   
-  
-  
-function [SimID, NotsimID, SimMetric, NotsimMetric, SimName, NotSimName] = ReadMetric(filename, numMetrics)
-
-  fin = fopen(filename, 'r');
-  
-  len = 1 ;
-  
-  pos1 = 1 ;
-  pos2 = 1 ;
-  while(len>0)
-      
-      [imageid, len]= fscanf(fin, '%d ', 1);
-      
-      if len>0
-         name1 = fscanf(fin, '%s ', 1);
-         name2 = fscanf(fin, '%s ', 1);
-         type = fscanf(fin, '%d ', 1);
-         
-         if type ==1
-             SimMetric(pos1, 1:numMetrics) = fscanf(fin, '%f ', numMetrics);
-             SimID(pos1) = imageid;
-             SimName(pos1).name1 = name1 ;
-             SimName(pos1).name2 = name2 ;
-             
-             pos1 = pos1 + 1 ;
-         end
-         if type ==2
-             NotsimMetric(pos2, 1:numMetrics) = fscanf(fin, '%f ', numMetrics);
-             NotsimID(pos2) = imageid;
-             NotSimName(pos2).name1 = name1 ;
-             NotSimName(pos2).name2 = name2 ;
-             
-             pos2 = pos2 + 1 ;
-         end
-         
-          
-      end
-      
-  end
-  
-  
-  fclose(fin);

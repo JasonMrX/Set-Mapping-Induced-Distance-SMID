@@ -7,7 +7,8 @@ function DisplayAllMetric_basedon10
 % 2: mDistPixel, 
 % 3: mDistDCT, 
 % 4: pmse, Nmatch1, VScore1,  Nmatch2, VScore2
-  [SimID  NotsimID  SimMetric NotsimMetric  SimName NotSimName] = ReadMetric('testresult10.dat') ;
+    close all;
+  [SimID  NotsimID  SimMetric NotsimMetric  SimName NotSimName] = ReadMetric('testresult10_old.dat') ;
   
   SelectSet1 = (SimID(:)>0)  ;
   SelectSet2 = (NotsimID(:)>0)  ;
@@ -25,18 +26,19 @@ function DisplayAllMetric_basedon10
       ylabel('Number of pairs of images');
       
       figure
-      Sim_DCTm    = hist(SimMetric   (SelectSet1,2), 0:40:3000);
-      Notsim_DCTm = hist(NotsimMetric(SelectSet2,2), 0:40:3000);
-      plot(Sim_DCTm, 'g-');
+      ax = 0:40:3000;
+      Sim_DCTm    = hist(SimMetric   (SelectSet1,2), ax);
+      Notsim_DCTm = hist(NotsimMetric(SelectSet2,2), ax);
+      plot(ax, Sim_DCTm, 'g-');
       hold on 
-      plot(Notsim_DCTm, 'r--');
+      plot(ax, Notsim_DCTm, 'r--');
 
       figure
       Sim_DCTm = hist(SimMetric(SelectSet1,1), 0:0.01:1);
       Notsim_DCTm = hist(NotsimMetric(SelectSet2,1), 0:0.01:1);
-      plot(Sim_DCTm, 'g-');
+      plot(0:0.01:1, Sim_DCTm, 'g-');
       hold on 
-      plot(Notsim_DCTm, 'r--');
+      plot(0:0.01:1, Notsim_DCTm, 'r--');
     else
       
       figure

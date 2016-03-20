@@ -6,7 +6,7 @@ function DisplayAllMetric_basedon8
 % 2: mDistPixel, 
 % 3: mDistDCT, 
 % 4: pmse, Nmatch1, VScore1,  Nmatch2, VScore2
-
+close all;
   [SimID  NotsimID  SimMetric NotsimMetric  SimName NotSimName] = ReadMetric('testresult8.dat') ;
  
   

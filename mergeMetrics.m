@@ -1,0 +1,10 @@
+[EMDID, ~, SimMetric, NotSimMetric, ~, ~] = ReadMetric('testresult11_old.dat', 8) ;
+SimEMD = SimMetric([1 : 312, 314 : end], 1);
+NotSimEMD = NotSimMetric(:, 1);
+[~, ~, SimMetric, NotSimMetric, ~, ~] = ReadMetric('testresult10_old.dat', 8) ;
+SimHI = SimMetric([1 : 312, 314 : end], 1);
+NotSimHI = NotSimMetric(:, 1);
+[SimID, NotSimID, SimMetric, NotSimMetric, SimName, NotSimName] = ReadMetric('ComputeResult_moreDat_DCT.dat', 3);
+SimMetric = [SimMetric, SimEMD, SimHI];
+NotSimMetric = [NotSimMetric, NotSimEMD, NotSimHI];
+WriteMetric(SimID, NotSimID, SimMetric, NotSimMetric, SimName, NotSimName, 'ComputeResult_moreDat_P2x2_MVE_LB8x8_EMD_HI.dat');
