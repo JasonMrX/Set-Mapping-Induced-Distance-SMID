@@ -1,0 +1,11 @@
+mvd = mv;
+n = 999;
+mvd(1 * n + 1 : 2 * n, :) = mvd(1 * n + 1 : 2 * n, :) - mvd(1 : n, :);
+mvd(2 * n + 1 : 3 * n, :) = mvd(2 * n + 1 : 3 * n, :) - mvd(1 : n, :);
+mvd(3 * n + 1 : 4 * n, :) = mvd(3 * n + 1 : 4 * n, :) - mvd(1 : n, :);
+mvd(4 * n + 1 : 5 * n, :) = mvd(4 * n + 1 : 5 * n, :) - mvd(1 : n, :);
+mvd(5 * n + 1 : 6 * n, :) = mvd(5 * n + 1 : 6 * n, :) - mvd(1 : n, :);
+figure, hist(mv(:), min(mv(:)) : max(mv(:)));
+title(calEntropy(mv(:)));
+figure, hist(mvd(:), min(mvd(:)) : max(mvd(:)));
+title(calEntropy(mvd(:)));
