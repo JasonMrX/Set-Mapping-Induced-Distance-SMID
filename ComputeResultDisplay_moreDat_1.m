@@ -1,5 +1,5 @@
-function ComputeResultDisplay_moreDat_P2x2_MVE_LB8x8_EMD_HI_LB8x8Org_LBMVE
-% display for showing the power of block-matching in pixel domain.
+function ComputeResultDisplay_moreDat_1
+% P2x2_MVE_LB8x8_EMD_HI_LB8x8Org_LBMVE
 
 close all;
 % 1  Histogram

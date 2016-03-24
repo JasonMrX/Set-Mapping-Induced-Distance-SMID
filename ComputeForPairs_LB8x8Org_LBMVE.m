@@ -27,11 +27,14 @@ function ComputeForPairs_LB8x8Org_LBMVE
         fprintf('%s %s\n', filename1, filename2);
 
 %          [mDistPixel, mDistPixel8, mDistCost, mDistVar, mDistEntropy, success] = ComputeD2Complexity(filename1, filename2)  
-        [mDistDCT_ori, mDistDCTEntropy, success] = ComputeDCTComplexity_Entropy(filename1, filename2)  
+        [mDistDCT_ori, mDistDCTEntropy, MVs, success] = ComputeDCTComplexity_Entropy(filename1, filename2);  
 
         if success
-            format = ['%4d %16s %16s %3d   ', repmat('%10.4f ', 1, argc + 2), '\n'];
-            fprintf(foutsim, format, ImagePair(n).imageid, filename1, filename2, ImagePair(n).vote, OtherMetric(n, :), mDistDCT_ori, mDistDCTEntropy); 
+%             format = ['%4d %16s %16s %3d   ', repmat('%10.4f ', 1, argc + 2), '\n'];
+%             fprintf(foutsim, format, ImagePair(n).imageid, filename1, filename2, ImagePair(n).vote, OtherMetric(n, :), mDistDCT_ori, mDistDCTEntropy); 
+            mvfilename = ['mv/', num2str(ImagePair(n).imageid)];
+            dlmwrite(mvfilename, MVs);
+            disp(['writing motion vectors to ', mvfilename, '...']);
         end
 
     end

@@ -1,4 +1,4 @@
-function  [mDistDCT, mDistDCTEntropy, success] = ComputeDCTComplexity_Entropy(filename1, filename2)
+function  [mDistDCT, mDistDCTEntropy, motionVectors, success] = ComputeDCTComplexity_Entropy(filename1, filename2)
 % To compute ISmai with two-layer blk matching.
 % First layer uses non-overlapping perfect match
 % Second layer uses co-located area, but allow smaller blks.
@@ -48,36 +48,53 @@ function  [mDistDCT, mDistDCTEntropy, success] = ComputeDCTComplexity_Entropy(fi
     
 %     ================= mv entropy ====================
     mv = [];
+    motionVectors = [];
+    idx = [1, 1; 1, 2; 2, 1; 3, 1; 2, 2; 1, 3];
     
-    DCTImage1 = C1(1 : 8 : end, 1 : 8 : end);
-    DCTImage2 = C2(1 : 8 : end, 1 : 8 : end);
-    [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
-    mv = [mv; getMVFromEdges(Cedges, size(DCTImage1, 2))];
+    for i = 1 : size(idx, 1)
+        DCTImage1 = C1(idx(i, 1) : 8 : end, idx(i, 2) : 8 : end);
+        DCTImage2 = C2(idx(i, 1) : 8 : end, idx(i, 2) : 8 : end);
+        [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
+        newMVs = getMVFromEdges(Cedges, size(DCTImage1, 2));
+        mv = [mv; newMVs];
+        motionVectors = [motionVectors newMVs];
+    end
     
-    DCTImage1 = C1(1 : 8 : end, 2 : 8 : end);
-    DCTImage2 = C2(1 : 8 : end, 2 : 8 : end);
-    [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
-    mv = [mv; getMVFromEdges(Cedges, size(DCTImage1, 2))];
-    
-    DCTImage1 = C1(2 : 8 : end, 1 : 8 : end);
-    DCTImage2 = C2(2 : 8 : end, 1 : 8 : end);
-    [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
-    mv = [mv; getMVFromEdges(Cedges, size(DCTImage1, 2))];
-    
-    DCTImage1 = C1(3 : 8 : end, 1 : 8 : end);
-    DCTImage2 = C2(3 : 8 : end, 1 : 8 : end);
-    [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
-    mv = [mv; getMVFromEdges(Cedges, size(DCTImage1, 2))];
-    
-    DCTImage1 = C1(2 : 8 : end, 2 : 8 : end);
-    DCTImage2 = C2(2 : 8 : end, 2 : 8 : end);
-    [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
-    mv = [mv; getMVFromEdges(Cedges, size(DCTImage1, 2))];
-    
-    DCTImage1 = C1(1 : 8 : end, 3 : 8 : end);
-    DCTImage2 = C2(1 : 8 : end, 3 : 8 : end);
-    [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
-    mv = [mv; getMVFromEdges(Cedges, size(DCTImage1, 2))];
+%     DCTImage1 = C1(1 : 8 : end, 1 : 8 : end);
+%     DCTImage2 = C2(1 : 8 : end, 1 : 8 : end);
+%     [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
+%     mv = [mv; getMVFromEdges(Cedges, size(DCTImage1, 2))];
+%     motionVectors = repmat(mv, 1, 6);
+%     
+%     DCTImage1 = C1(1 : 8 : end, 2 : 8 : end);
+%     DCTImage2 = C2(1 : 8 : end, 2 : 8 : end);
+%     [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
+%     mv = [mv; getMVFromEdges(Cedges, size(DCTImage1, 2))];
+%     motionVectors(:, 3 : 4);
+%     
+%     DCTImage1 = C1(2 : 8 : end, 1 : 8 : end);
+%     DCTImage2 = C2(2 : 8 : end, 1 : 8 : end);
+%     [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
+%     mv = [mv; getMVFromEdges(Cedges, size(DCTImage1, 2))];
+%     motionVectors(:, 5 : 6);
+%     
+%     DCTImage1 = C1(3 : 8 : end, 1 : 8 : end);
+%     DCTImage2 = C2(3 : 8 : end, 1 : 8 : end);
+%     [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
+%     mv = [mv; getMVFromEdges(Cedges, size(DCTImage1, 2))];
+%     motionVectors(:, 7 : 8);
+%     
+%     DCTImage1 = C1(2 : 8 : end, 2 : 8 : end);
+%     DCTImage2 = C2(2 : 8 : end, 2 : 8 : end);
+%     [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
+%     mv = [mv; getMVFromEdges(Cedges, size(DCTImage1, 2))];
+%     motionVectors(:, 9 : 10);
+%     
+%     DCTImage1 = C1(1 : 8 : end, 3 : 8 : end);
+%     DCTImage2 = C2(1 : 8 : end, 3 : 8 : end);
+%     [~, Cedges, ~] = DoEdmondMatch(DCTImage1 - mean(DCTImage1(:)), DCTImage2 - mean(DCTImage2(:)), 1) ;
+%     mv = [mv; getMVFromEdges(Cedges, size(DCTImage1, 2))];
+%     motionVectors(:, 11 : 12);
     
     mDistDCTEntropy = calEntropy(mv(:));
 %     ================= mv entropy ====================
