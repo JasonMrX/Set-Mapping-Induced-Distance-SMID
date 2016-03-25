@@ -25,6 +25,7 @@ function  [mDistDCT, mDistDCTEntropy, motionVectors, success] = ComputeDCTComple
        fprintf('size different\n');
        mDistDCT = 0;
        mDistDCTEntropy = 0;
+       motionVectors = [];
        success = 0;
        return ;
    end

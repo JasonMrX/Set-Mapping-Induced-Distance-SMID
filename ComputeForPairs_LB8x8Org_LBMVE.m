@@ -16,7 +16,7 @@ function ComputeForPairs_LB8x8Org_LBMVE
 %     ImagePair(x) = ImagePair;
 %     OtherMetric(x, :) = OtherMetric;
     
-    foutsim=fopen(AllMetrics_SimFile, 'w');
+%     foutsim=fopen(AllMetrics_SimFile, 'w');
 
     Npairs = length(ImagePair);
 
