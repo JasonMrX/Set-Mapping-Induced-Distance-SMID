@@ -21,6 +21,9 @@ function ComputeForPairs_LB8x8Org_LBMVE
     Npairs = length(ImagePair);
 
     for n = 1 : Npairs
+        if ImagePair(n).imageid <= 1170
+            continue;
+        end
         filename1 = ImagePair(n).name1 ;
         filename2 = ImagePair(n).name2 ;
 
@@ -38,7 +41,7 @@ function ComputeForPairs_LB8x8Org_LBMVE
         end
 
     end
-    fclose(foutsim);
+%     fclose(foutsim);
 
     return ;
         
