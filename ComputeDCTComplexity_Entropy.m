@@ -108,12 +108,6 @@ function [mv] = getMVFromEdges(Cedges, col)
     Pos1 = [floor(Id1 / col) + 1, mod(Id1, col) + 1];
     Pos2 = [floor(Id2 / col) + 1, mod(Id2, col) + 1];
     mv = Pos1 - Pos2;
-    
-function [entropy] = calEntropy(data)
-    h = hist(data, min(data):max(data));
-    h = h(h ~= 0);
-    h = h / sum(h);
-    entropy = sum(-h .* log2(h));
       
 % search by MSE for a few locations 
 function [Y, MseMinPos] = SearchByMSE(X1ori, X2ori)
