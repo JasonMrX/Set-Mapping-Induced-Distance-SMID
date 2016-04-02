@@ -1,4 +1,4 @@
-function ComputeDCTMVEntropy_HiEnergy( mvfilename, filename1, filename2 )
+function [EntropyArray] = ComputeDCTMVEntropy_HiEnergy( mvfilename, filename1, filename2 )
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
     sizef = 264*264;
@@ -38,7 +38,8 @@ function ComputeDCTMVEntropy_HiEnergy( mvfilename, filename1, filename2 )
     mv = dlmread(mvfilename);
     [height, width] = size(C1(1 : 8 : end, 1 : 8 : end));
     idx = [1, 1; 1, 2; 2, 1; 3, 1; 2, 2; 1, 3];
-    for i = 1
+    close all;
+    for i = 1 : 6
         py = reshape(mv(:, (i - 1) * 2 + 1), width, height)';
         px = reshape(mv(:, i * 2), width, height)';
         DCT1 = C1(idx(i, 1) : 8 : end, idx(i, 2) : 8 : end);
@@ -46,29 +47,34 @@ function ComputeDCTMVEntropy_HiEnergy( mvfilename, filename1, filename2 )
         
         meanPx = mean(DCT1(:));
         D = abs(DCT1 - mean(DCT1(:)));
-        hh = max(DCT1(:)) - meanPx;
-        lh = min(DCT1(:)) - meanPx; 
 %         mask = (DCT1 > (0.3 * hh + meanPx)) + (DCT1 < (0.3 * lh + meanPx));
-%         mask = D > median(D(:));
-        mask = DCT1 > median(DCT1(:));
+        mask = D > median(D(:));
+%         mask = DCT1 > median(DCT1(:));
 %         ey = py - spatialPredict(py);
 %         ex = px - spatialPredict(px);
 %         EntropyArray((i - 1) * 4 + 1 : i * 4) = [calEntropy(py(:)), calEntropy(ey(:)), calEntropy(px(:)), calEntropy(ex(:))];
-        close all;
+
+%         close all;
         figure, 
-        subplot(3, 2, 3)
+        subplot(2, 4, 1)
         imshow(DCT1, []);
-        subplot(3, 2, 4);
+        subplot(2, 4, 5);
         imshow(DCT2, []);
-        subplot(3, 2, 5);
+        subplot(2, 4, 2);
         imshow(abs(py .* mask), [0, 26]);
-%         imshow(mask, []);
-        subplot(3, 2, 6);
+        subplot(2, 4, 6);
         imshow(abs(px .* mask), [0, 36]);
-        subplot(3, 2, 1);
+        subplot(2, 4, 3);
+        imshow(abs(py), [0, 26]);
+        subplot(2, 4, 7);
+        imshow(abs(px), [0, 36]);
+        subplot(2, 4, 4);
         imshow(uint8(X1L));
-        subplot(3, 2, 2);
+        subplot(2, 4, 8);
         imshow(uint8(X2L));
+        pyCol = py(:);
+        pxCol = px(:);
+        EntropyArray((i - 1) * 2 + 1 : i * 2) = [calEntropy(pyCol(mask(:) == 1)), calEntropy(pxCol(mask(:) == 1))];
     end
 
 end

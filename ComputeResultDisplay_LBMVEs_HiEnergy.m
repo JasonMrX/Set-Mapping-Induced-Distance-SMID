@@ -1,4 +1,4 @@
-function ComputeResultDisplay_LBMVEs
+function ComputeResultDisplay_LBMVEs_HiEnergy
 % display for showing the power of block-matching in pixel domain.
 
 close all;
@@ -7,7 +7,7 @@ close all;
 % 3: mDistDCT, 
 % 4: pmse, Nmatch1, VScore1,  Nmatch2, VScore2
 
-  [SimID, NotsimID, SimMetric, NotsimMetric, SimName, NotSimName] = ReadMetric('ComputeResult_moreDat_LB8x8Org_LBMVEs.dat', 25) ;
+  [SimID, NotsimID, SimMetric, NotsimMetric, SimName, NotSimName] = ReadMetric('ComputeResult_moreDat_LB8x8Org_LBMVEs(HiEnergy).dat', 13) ;
  
 %   figure,  
 %   hold on;
@@ -59,9 +59,9 @@ close all;
       ylabel('Number of pairs of images');
 %       ylim([0 50]);
 %       xlim([0 2000]);
-      for idx = 2 : 5
+      for idx = 2 : 13
           figure,
-          range = 4 : 0.05 : 7;
+          range = 3 : 0.05 : 6;
           Sim_DCTm = hist(SimMetric(SelectSet1,idx), range);
           Notsim_DCTm = hist(NotsimMetric(SelectSet2,idx), range);
           ax = range;
