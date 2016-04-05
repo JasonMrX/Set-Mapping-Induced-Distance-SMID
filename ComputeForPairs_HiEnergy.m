@@ -16,11 +16,11 @@ function ComputeForPairs_HiEnergy
 %     ImagePair(x) = ImagePair;
 %     OtherMetric(x, :) = OtherMetric;
     
-%     foutsim=fopen(AllMetrics_SimFile, 'w');
+    foutsim=fopen(AllMetrics_SimFile, 'w');
 
     Npairs = length(ImagePair);
 
-    for n = 1000 : Npairs
+    for n = 1 : Npairs
         filename1 = ImagePair(n).name1 ;
         filename2 = ImagePair(n).name2 ;
 
@@ -31,14 +31,14 @@ function ComputeForPairs_HiEnergy
         EntropyArray = ComputeDCTMVEntropy_HiEnergy(mvfilename, filename1, filename2);  
 
         if 1
-            format = ['%4d %16s %16s %3d   ', repmat('%10.4f ', 1, 1 + 12), '\n'];
-%             fprintf(foutsim, format, ImagePair(n).imageid, filename1, filename2, ImagePair(n).vote, OtherMetric(n, 6), EntropyArray); 
+            format = ['%4d %16s %16s %3d   ', repmat('%10.4f ', 1, 1 + 1), '\n'];
+            fprintf(foutsim, format, ImagePair(n).imageid, filename1, filename2, ImagePair(n).vote, OtherMetric(n, 6), EntropyArray); 
 %             dlmwrite(mvfilename, MVs);
 %             disp(['writing motion vectors to ', mvfilename, '...']);
         end
 
     end
-%     fclose(foutsim);
+    fclose(foutsim);
 
     return ;
         
