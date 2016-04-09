@@ -49,7 +49,7 @@ function [EntropyArray] = ComputeDCTMVEntropy_HiEnergy( mvfilename, filename1, f
         meanPx = mean(DCT1(:));
         D = abs(DCT1 - mean(DCT1(:)));
         [~, sortIdx] = sort(-D(:));
-        threshold = D(sortIdx(floor(0.3 * numel(D(:)))));
+        threshold = D(sortIdx(floor(0.10 * numel(D(:)))));
 %         mask = (DCT1 > (0.3 * hh + meanPx)) + (DCT1 < (0.3 * lh + meanPx));
         mask = D > threshold;
         [~, ey] = spatialPredict(py .* mask, mask);
@@ -60,25 +60,27 @@ function [EntropyArray] = ComputeDCTMVEntropy_HiEnergy( mvfilename, filename1, f
 %         EntropyArray((i - 1) * 4 + 1 : i * 4) = [calEntropy(py(:)), calEntropy(ey(:)), calEntropy(px(:)), calEntropy(ex(:))];
 
 % %         close all;
-%         figure, 
-%         subplot(2, 4, 1)
-%         imshow(DCT1, []);
-%         subplot(2, 4, 5);
-%         imshow(DCT2, []);
-%         subplot(2, 4, 2);
-%         imshow(abs(py .* mask), [0, 26]);
-%         subplot(2, 4, 6);
-%         imshow(abs(px .* mask), [0, 36]);
-%         subplot(2, 4, 3);
-%         imshow(abs(py), [0, 26]);
-%         subplot(2, 4, 7);
-%         imshow(abs(px), [0, 36]);
-%         subplot(2, 4, 4);
-%         imshow(uint8(X1L));
-%         subplot(2, 4, 8);
-%         imshow(uint8(X2L));
-%         pyCol = py(:);
-%         pxCol = px(:);
+        figure, 
+        minDCT = min([DCT1(:); DCT2(:)]);
+        maxDCT = max([DCT1(:); DCT2(:)]);
+        subplot(2, 4, 1)
+        imshow(DCT1, [minDCT, maxDCT]);
+        subplot(2, 4, 5);
+        imshow(DCT2, [minDCT, maxDCT]);
+        subplot(2, 4, 2);
+        imshow(abs(py .* mask), [0, 26]);
+        subplot(2, 4, 6);
+        imshow(abs(px .* mask), [0, 36]);
+        subplot(2, 4, 3);
+        imshow(abs(py), [0, 26]);
+        subplot(2, 4, 7);
+        imshow(abs(px), [0, 36]);
+        subplot(2, 4, 4);
+        imshow(uint8(X1L));
+        subplot(2, 4, 8);
+        imshow(uint8(X2L));
+        pyCol = py(:);
+        pxCol = px(:);
 %         EntropyArray((i - 1) * 2 + 1 : i * 2) = [calEntropy(pyCol(mask(:) == 1)), calEntropy(pxCol(mask(:) == 1))];
         res = [res; ey(mask(:) == 1); ex(mask(:) == 1)];
     end

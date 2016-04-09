@@ -7,7 +7,7 @@ close all;
 % 3: mDistDCT, 
 % 4: pmse, Nmatch1, VScore1,  Nmatch2, VScore2
 
-  [SimID, NotsimID, SimMetric, NotsimMetric, SimName, NotSimName] = ReadMetric('ComputeResult_moreDat_LB8x8Org_LBMVEs(HiEnergy).dat', 2) ;
+  [SimID, NotsimID, SimMetric, NotsimMetric, SimName, NotSimName] = ReadMetric('ComputeResult_moreDat_LB8x8Org_LBMVEs(HiEnergy_20)_cleaned.dat', 2) ;
  
 %   figure,  
 %   hold on;
@@ -44,7 +44,7 @@ close all;
       idx = 1;
       low = min([SimMetric(SelectSet1, idx); NotsimMetric(SelectSet2, idx)]);
       high = max([SimMetric(SelectSet1, idx); NotsimMetric(SelectSet2, idx)]);
-      range = low: (high - low) / 100: high;
+      range = low: (high - low) / 400: high;
       Sim_DCTm = hist(SimMetric(SelectSet1,idx), range);
       Notsim_DCTm = hist(NotsimMetric(SelectSet2,idx), range);
       ax = range;
@@ -61,7 +61,7 @@ close all;
 %       xlim([0 2000]);
       for idx = 2
           figure,
-          range = 4 : 0.05 : 7;
+          range = 3 : 0.05 : 6;
           Sim_DCTm = hist(SimMetric(SelectSet1,idx), range);
           Notsim_DCTm = hist(NotsimMetric(SelectSet2,idx), range);
           ax = range;
@@ -94,7 +94,7 @@ close all;
       SimDistCost = SimMetric(SelectSet1, 2);
       NotSimDist = NotsimMetric(SelectSet2,1);
       NotSimDistCost = NotsimMetric(SelectSet2,2);
-      plot(SimDist, SimDistCost, 'g.');
+      plot(SimDist, SimDistCost, 'b.');
       hold on;
       plot(NotSimDist, NotSimDistCost, 'r.');
 %       
